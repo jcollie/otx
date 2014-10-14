@@ -82,4 +82,13 @@ class Client(object):
 
     def channelOpened(self, _):
         self.log.debug('channel opened')
+        self.reactor.callLater(0.0, self.getReturnMessage)
         self.setupFinished()
+
+    def getReturnMessage(self):
+        d = self.connection.basic_return_queue.get()
+        d.addCallback(self.gotReturnMessage)
+
+    def gotReturnMessage(self, message):
+        self.reactor.callLater(0.0, self.getReturnMessage)
+        self.log.error(`message`)
