@@ -6,6 +6,7 @@ from twisted.internet import defer
 from twisted.internet import protocol
 from twisted.web.iweb import IBodyProducer
 from twisted.web.client import ResponseDone
+from twisted.logger import Logger
 
 class StringProducer(object):
     implements(IBodyProducer)
@@ -28,9 +29,10 @@ class StringProducer(object):
         pass
 
 class GatherAndLog(protocol.Protocol):
-    def __init__(self, log, finished = None, watchdog = None):
+    log = Logger()
+
+    def __init__(self, finished = None, watchdog = None):
         self.buffer = ''
-        self.log = log
         self.finished = finished
         self.watchdog = watchdog
 
@@ -53,9 +55,10 @@ class GatherAndLog(protocol.Protocol):
             self.finished.callback(self.buffer)
 
 class Gather(protocol.Protocol):
-    def __init__(self, log, finished = None, watchdog = None):
+    log = Logger()
+
+    def __init__(self, finished = None, watchdog = None):
         self.buffer = ''
-        self.log = log
         self.finished = finished
         self.watchdog = watchdog
 

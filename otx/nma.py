@@ -9,6 +9,8 @@ from twisted.web.http_headers import Headers
 
 from twisted.internet import defer
 
+from twisted.logger import Logger
+
 class QuietHTTP11ClientFactory(_HTTP11ClientFactory):
     noisy = False
 
@@ -20,9 +22,10 @@ from .utils import GatherAndLog
 from .utils import Gather
 
 class NMA(object):
-    def __init__(self, reactor, log, application, watchdog = None):
+    log = Logger()
+    
+    def __init__(self, reactor, application, watchdog = None):
         self.reactor = reactor
-        self.log = log
         self.application = application
         self.watchdog = watchdog
 
@@ -50,14 +53,13 @@ class NMA(object):
                                         'Content-Type': ['application/x-www-form-urlencoded']}),
                                StringProducer(body))
         d.addCallback(self._processResponse, finished)
-        d.addErrback(self.log.errback)
 
     def _processResponse(self, response, finished):
         if response.code != 200:
-            self.log.msg('NotifyMyAndroid notification resulted in response code {}'.format(response.code))
-            response.deliverBody(GatherAndLog(self.log, finished = finished, watchdog = self.watchdog))
+            self.log.debug('NotifyMyAndroid notification resulted in response code {}'.format(response.code))
+            response.deliverBody(GatherAndLog(finished = finished, watchdog = self.watchdog))
         else:
-            response.deliverBody(Gather(self.log, finished = finished, watchdog = watchdog))
+            response.deliverBody(Gather(finished = finished, watchdog = watchdog))
 
     def sendNotifications(self, apikeys, event, description, priority = 0):
         #self.log.debug('Sending NotifyMyAndroid notifications')
