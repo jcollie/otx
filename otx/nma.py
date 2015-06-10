@@ -59,7 +59,7 @@ class NMA(object):
             self.log.debug('NotifyMyAndroid notification resulted in response code {}'.format(response.code))
             response.deliverBody(GatherAndLog(finished = finished, watchdog = self.watchdog))
         else:
-            response.deliverBody(Gather(finished = finished, watchdog = watchdog))
+            response.deliverBody(Gather(finished = finished, watchdog = self.watchdog))
 
     def sendNotifications(self, apikeys, event, description, priority = 0):
         #self.log.debug('Sending NotifyMyAndroid notifications')
