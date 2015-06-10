@@ -17,6 +17,7 @@ import urllib
 from .tbq import TokenBucketQueue
 from .utils import StringProducer
 from .utils import GatherAndLog
+from .utils import Gather
 
 class NMA(object):
     def __init__(self, reactor, log, application, watchdog = None):
@@ -52,11 +53,14 @@ class NMA(object):
         d.addErrback(self.log.errback)
 
     def _processResponse(self, response, finished):
-        self.log.msg('NotifyMyAndroid notification resulted in response code {}'.format(response.code))
-        response.deliverBody(GatherAndLog(self.log, finished = finished, watchdog = self.watchdog))
+        if response.code != 200:
+            self.log.msg('NotifyMyAndroid notification resulted in response code {}'.format(response.code))
+            response.deliverBody(GatherAndLog(self.log, finished = finished, watchdog = self.watchdog))
+        else:
+            response.deliverBody(Gather(self.log, finished = finished, watchdog = watchdog))
 
     def sendNotifications(self, apikeys, event, description, priority = 0):
-        self.log.debug('Sending NotifyMyAndroid notifications')
+        #self.log.debug('Sending NotifyMyAndroid notifications')
 
         if not apikeys:
             self.log.debug('No NotifyMyAndroid API keys to send to!')

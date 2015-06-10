@@ -51,3 +51,26 @@ class GatherAndLog(protocol.Protocol):
 
         if self.finished is not None:
             self.finished.callback(self.buffer)
+
+class Gather(protocol.Protocol):
+    def __init__(self, log, finished = None, watchdog = None):
+        self.buffer = ''
+        self.log = log
+        self.finished = finished
+        self.watchdog = watchdog
+
+    def dataReceived(self, data):
+        if self.watchdog is not None:
+            self.watchdog.update()
+
+        self.buffer += data
+
+    def connectionLost(self, reason):
+        if self.watchdog is not None:
+            self.watchdog.update()
+
+        if not isinstance(reason.value, ResponseDone):
+            self.log.debug(reason)
+
+        if self.finished is not None:
+            self.finished.callback(self.buffer)
