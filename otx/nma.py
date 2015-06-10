@@ -3,10 +3,14 @@
 from __future__ import absolute_import
 
 from twisted.web.client import Agent
+from twisted.web.client import _HTTP11ClientFactory
 from twisted.web.client import HTTPConnectionPool
 from twisted.web.http_headers import Headers
 
 from twisted.internet import defer
+
+class QuietHTTP11ClientFactory(_HTTP11ClientFactory):
+    noisy = False
 
 import urllib
 
@@ -23,6 +27,7 @@ class NMA(object):
 
         self.pool = HTTPConnectionPool(self.reactor, persistent = True)
         self.pool.maxPersistentPerHost = 1
+        self.pool._factory = QuietHTTP11ClientFactory
         self.agent = Agent(self.reactor, pool = self.pool)
 
         self.tbq = TokenBucketQueue(self.reactor, 1.0, 2.0)
