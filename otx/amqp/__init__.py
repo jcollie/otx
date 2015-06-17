@@ -5,6 +5,7 @@ import pkg_resources
 from twisted.internet import defer
 from twisted.internet import endpoints
 from twisted.internet import protocol
+from twisted.logger import Logger
 
 import txamqp.protocol
 import txamqp.client 
@@ -12,6 +13,7 @@ import txamqp.content
 import txamqp.spec
 
 class Factory(protocol.ClientFactory):
+    log = Logger()
     noisy = False
 
     def __init__(self, vhost, spec):
@@ -30,13 +32,14 @@ class Factory(protocol.ClientFactory):
                                          spec = self.spec)
 
 class Client(object):
+    log = Logger()
+    
     NON_PERSISTENT = 1
     PERSISTENT = 2
     Content = txamqp.content.Content
 
-    def __init__(self, reactor, log, hostname, port = 5672, ssl = False, vhost = '/', username = 'guest', password = 'guest'):
+    def __init__(self, reactor, hostname, port = 5672, ssl = False, vhost = '/', username = 'guest', password = 'guest'):
         self.reactor = reactor
-        self.log = log
 
         spec = pkg_resources.resource_string(__name__, 'amqp0-9-1.stripped.xml')
         self.spec = txamqp.spec.loadString(spec)
