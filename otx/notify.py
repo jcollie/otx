@@ -5,11 +5,13 @@ import socket
 
 from twisted.internet import protocol
 from twisted.internet import defer
+from twisted.logger import Logger
 
 class NotifyProtocol(protocol.ConnectedDatagramProtocol):
-    def __init__(self, reactor, log):
+    log = Logger()
+
+    def __init__(self, reactor):
         self.reactor = reactor
-        self.log = log
         self.when_connected = defer.Deferred()
         self.state = 'connecting'
 
@@ -32,9 +34,10 @@ class NotifyProtocol(protocol.ConnectedDatagramProtocol):
             self.log.debug('Received data from notify socket: {}'.format(`data`))
 
 class Notify(object):
-    def __init__(self, reactor, log = None):
+    log = Logger()
+
+    def __init__(self, reactor):
         self.reactor = reactor
-        self.log = log
         self.notify_socket_address = None
         self.notify_socket = None
         self.connection_attempts = 0
@@ -98,8 +101,8 @@ class Notify(object):
 
 notifier = None
 
-def startNotifier(reactor, log):
+def startNotifier(reactor):
     global notifier
     if notifier is None:
-        notifier = Notify(reactor, log)
+        notifier = Notify(reactor)
     return notifier
