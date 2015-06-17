@@ -62,7 +62,7 @@ class Notify(object):
                 self.log.error('No notification socket address!')
             return
 
-        self.notify_socket = NotifyProtocol(self.reactor, self.log)
+        self.notify_socket = NotifyProtocol(self.reactor)
 
         self.notify_socket.when_connected.addCallback(self.when_connected_cb, data)
 
