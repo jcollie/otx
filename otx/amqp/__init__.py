@@ -64,7 +64,6 @@ class Client(object):
             self.endpoint = endpoints.clientFromString(self.reactor, 'tcp:host={}:port={}'.format(self.hostname, self.port))
         d = self.endpoint.connect(self.factory)
         d.addCallback(self.gotConnection)
-        d.addErrback(self.log.errback)
         
     def gotConnection(self, connection):
         self.log.debug('got connection, logging in')
