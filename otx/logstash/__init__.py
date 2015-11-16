@@ -5,13 +5,31 @@ import ujson
 
 es_timestamp_format = 'YYYY-MM-DDTHH:mm:ss.SSSZZ'
 
+class InnerMessage(dict):
+    def __init__(self, *args, **kwargs):
+        self.update(*args, **kwargs)
+
+    def dumps(self):
+        return ujson.dumps(self)
+
+    boolean_conversions = {'true': True,
+                           'yes': True,
+                           'false': False,
+                           'no': False}
+
+    def convert_boolean(self, key):
+        if self.__contains__(key):
+            value = self.__getitem__(key).lower()
+            if value in self.boolean_conversions:
+                self.__setitem__(key, self.boolean_conversions[value])
+
 class Message(dict):
     @classmethod
     def loads(klass, json, prefix = None):
         message = klass()
         data = ujson.loads(json)
         if prefix is not None:
-            data = {prefix: data}
+            data = {prefix: InnerMessage(data)}
         message.update(data)
         return message
 
