@@ -8,6 +8,7 @@ from twisted.internet import defer
 from twisted.logger import Logger
 
 class NotifyProtocol(protocol.ConnectedDatagramProtocol):
+    noisy = False
     log = Logger()
 
     def __init__(self, reactor):
