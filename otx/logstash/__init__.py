@@ -7,9 +7,12 @@ es_timestamp_format = 'YYYY-MM-DDTHH:mm:ss.SSSZZ'
 
 class Message(dict):
     @classmethod
-    def loads(klass, *args, **kw):
+    def loads(klass, json, prefix = None):
         message = klass()
-        message.update(ujson.loads(*args, **kw))
+        data = ujson.loads(json)
+        if prefix is not None:
+            data = {prefix: data}
+        message.update(data)
         return message
 
     def __init__(self, *args, **kwargs):
