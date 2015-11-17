@@ -1,7 +1,7 @@
 # -*- mode: python; coding: utf-8 -*-
 
 import arrow
-import ujson
+import json
 
 es_timestamp_format = 'YYYY-MM-DDTHH:mm:ss.SSSZZ'
 
@@ -10,7 +10,7 @@ class InnerMessage(dict):
         self.update(*args, **kwargs)
 
     def dumps(self):
-        return ujson.dumps(self)
+        return json.dumps(self)
 
     boolean_conversions = {'true': True,
                            'yes': True,
@@ -27,7 +27,7 @@ class Message(dict):
     @classmethod
     def loads(klass, json, prefix = None):
         message = klass()
-        data = ujson.loads(json)
+        data = json.loads(json)
         if prefix is not None:
             data = {prefix: InnerMessage(data)}
         message.update(data)
@@ -49,7 +49,7 @@ class Message(dict):
         self.update(*args, **kwargs)
 
     def dumps(self):
-        return ujson.dumps(self)
+        return json.dumps(self)
 
     boolean_conversions = {'true': True,
                            'yes': True,
