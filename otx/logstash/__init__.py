@@ -25,9 +25,9 @@ class InnerMessage(dict):
 
 class Message(dict):
     @classmethod
-    def loads(klass, json, prefix = None):
+    def loads(klass, data, prefix = None):
         message = klass()
-        data = json.loads(json)
+        data = json.loads(data)
         if prefix is not None:
             data = {prefix: InnerMessage(data)}
         message.update(data)
