@@ -12,10 +12,10 @@ class InnerMessage(dict):
     def dumps(self):
         return json.dumps(self)
 
-    boolean_conversions = {'true': True,
-                           'yes': True,
-                           'false': False,
-                           'no': False}
+    boolean_conversions = {'true': 1,
+                           'yes': 1,
+                           'false': 0,
+                           'no': 0}
 
     def convert_boolean(self, key):
         if self.__contains__(key):
@@ -51,10 +51,10 @@ class Message(dict):
     def dumps(self):
         return json.dumps(self)
 
-    boolean_conversions = {'true': True,
-                           'yes': True,
-                           'false': False,
-                           'no': False}
+    boolean_conversions = {'true': 1,
+                           'yes': 1,
+                           'false': 0,
+                           'no': 0}
 
     def convert_boolean(self, key):
         if self.__contains__(key):
