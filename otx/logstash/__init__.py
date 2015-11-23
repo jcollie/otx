@@ -12,18 +12,21 @@ class InnerMessage(dict):
     def dumps(self):
         return json.dumps(self)
 
-    boolean_conversions = {'true': 1,
-                           'yes': 1,
-                           'false': 0,
-                           'no': 0,
-                           True: 1,
-                           False: 0}
+    boolean_conversions = {'false': False,
+                           'no': False,
+                           'off': False,
+                           '0': False,
+                           '': False,
+                           0: False,
+                           0.0: False}
 
     def convert_boolean(self, key):
         if self.__contains__(key):
             value = self.__getitem__(key).lower()
             if value in self.boolean_conversions:
                 self.__setitem__(key, self.boolean_conversions[value])
+            else:
+                self.__setitem__(key, True)
 
 class Message(dict):
     @classmethod
@@ -53,15 +56,18 @@ class Message(dict):
     def dumps(self):
         return json.dumps(self)
 
-    boolean_conversions = {'true': 1,
-                           'yes': 1,
-                           'false': 0,
-                           'no': 0,
-                           True: 1,
-                           False: 0}
+    boolean_conversions = {'false': False,
+                           'no': False,
+                           'off': False,
+                           '0': False,
+                           '': False,
+                           0: False,
+                           0.0: False}
 
     def convert_boolean(self, key):
         if self.__contains__(key):
             value = self.__getitem__(key).lower()
             if value in self.boolean_conversions:
                 self.__setitem__(key, self.boolean_conversions[value])
+            else:
+                self.__setitem__(key, True)
