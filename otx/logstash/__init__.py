@@ -15,7 +15,9 @@ class InnerMessage(dict):
     boolean_conversions = {'true': 1,
                            'yes': 1,
                            'false': 0,
-                           'no': 0}
+                           'no': 0,
+                           True: 1,
+                           False: 0}
 
     def convert_boolean(self, key):
         if self.__contains__(key):
@@ -54,7 +56,9 @@ class Message(dict):
     boolean_conversions = {'true': 1,
                            'yes': 1,
                            'false': 0,
-                           'no': 0}
+                           'no': 0,
+                           True: 1,
+                           False: 0}
 
     def convert_boolean(self, key):
         if self.__contains__(key):
