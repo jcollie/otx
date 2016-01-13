@@ -1,5 +1,7 @@
 # -*- mode: python; coding: utf-8 -*-
 
+import re
+
 named_re_1 = re.compile(r'\Aqueries: (?P<severity>critical|error|warning|notice|info|debug \d+|dynamic): client (?P<source_address>.*)#(?P<source_port>\d+) \((?P<name>.*)\): query: (?P=name) (?P<class>IN) (?P<type>.*) (?P<recursion_desired>[+-])?(?P<signed>S)?(?P<edns>E)?(?P<tcp>T)?(?P<dnssec_ok>D)?(?P<checking_disabled>C)? \((?P<destination_address>.*)\)\Z', re.DOTALL | re.MULTILINE | re.IGNORECASE)
 
 def parse_log_message(message):
@@ -7,7 +9,6 @@ def parse_log_message(message):
     
     match = named_re_1.match(message)
     if match:
-        #message['tags'].append('dns_query')
         for k, v in match.groupdict().items():
             if k == 'source_port':
                 v = int(v)
