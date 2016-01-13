@@ -39,7 +39,7 @@ class Message(dict):
         return message
 
     def __init__(self, *args, **kwargs):
-        dict.__setitem__(self, '@version', 1)
+        #dict.__setitem__(self, '@version', 1)
 
         if 'timestamp' in kwargs:
             dict.__setitem__(self, '@timestamp', kwargs.pop('timestamp'))
@@ -53,6 +53,14 @@ class Message(dict):
 
         self.update(*args, **kwargs)
 
+    def add_tag(self, tag):
+        if tag not in dict.__getitem__(self, 'tags'):
+            dict.__getitem__(self, 'tags').append(tag)
+
+    def add_tags(self, tags):
+        for tag in tags:
+            self.add_tag(tag)
+            
     def dumps(self):
         return json.dumps(self)
 
