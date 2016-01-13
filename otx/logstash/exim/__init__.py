@@ -29,7 +29,7 @@ exim_no_smtp_error_re = re.compile(r': an MX or SRV record indicated no SMTP ser
 exim_no_mx_error_re = re.compile(r': all relevant MX records point to non-existent hosts\Z', re.DOTALL | re.MULTILINE)
 exim_reverse_re = re.compile(r'\Ano host name found for IP address (?P<remote_address>[^ ]+)\Z', re.DOTALL | re.MULTILINE)
     
-def parse_log_message(self, message):
+def parse_log_message(message):
     exim = {}
     match = exim_id_re.match(message)
     if not match:
