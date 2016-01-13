@@ -40,8 +40,7 @@ def parse_log_message(message):
             exim['unparsed'] = 0
             exim['remote_address'] = match.group('remote_address')
 
-        message['exim'] = exim
-        return
+        return ['exim'], {'exim': exim}
 
     exim['id'] = match.group('id')
     message = match.group('rest')
