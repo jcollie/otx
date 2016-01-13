@@ -5,7 +5,7 @@ from twisted.logger import Logger
 
 log = Logger()
 
-exim_re_1 = re.compile(r'\A(?P<id>[A-Za-z0-9]{6}-[A-Za-z0-9]{6}-[A-Za-z0-9]{2})\s*(?P<rest>.*)\Z', re.DOTALL | re.MULTILINE)
+exim_id_re = re.compile(r'\A(?P<id>[A-Za-z0-9]{6}-[A-Za-z0-9]{6}-[A-Za-z0-9]{2})\s*(?P<rest>.*)\Z', re.DOTALL | re.MULTILINE)
 
 exim_sender_re = re.compile(r'\A<= (?P<sender>[^ ]+) ', re.DOTALL | re.MULTILINE)
 exim_recipient_re = re.compile(r'\A(?:=>|\*\*) (?P<recipient>[^ ]+)(?: <(?P<recipient_original>[^ ]+)>)?', re.DOTALL | re.MULTILINE)
