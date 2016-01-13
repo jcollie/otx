@@ -59,7 +59,7 @@ def parse_log_message(message):
                         exim[key] = value
                 message = message[:match.start()] + message[match.end():]
 
-        if m.strip():
+        if message.strip():
             log.debug('something not parsed: {message:}', message = message)
             exim['unparsed'] = 1
 
@@ -76,7 +76,7 @@ def parse_log_message(message):
                         exim[key] = value
                 message = message[:match.start()] + message[match.end():]
 
-        if m.strip():
+        if message.strip():
             log.debug('something not parsed: {message:}', message = message)
             exim['unparsed'] = 1
 
