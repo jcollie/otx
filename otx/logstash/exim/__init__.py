@@ -34,13 +34,18 @@ def parse_log_message(message):
     exim = {}
     match = exim_id_re.match(message)
     if not match:
-        exim['unparsed'] = 1
-
+        
         match = exim_reverse_re.match(message)
         if match:
             exim['unparsed'] = 0
             exim['remote_address'] = match.group('remote_address')
+            message = message[:match.start()] + message[match.end():]
 
+        if message.strip():
+            log.debug('something not parsed: {message:}', message = message)
+            exim['unparsed'] = 1
+            exim['unparsed_bits'] = message.strip()
+        
         return ['exim'], {'exim': exim}
 
     exim['id'] = match.group('id')
@@ -62,6 +67,7 @@ def parse_log_message(message):
         if message.strip():
             log.debug('something not parsed: {message:}', message = message)
             exim['unparsed'] = 1
+            exim['unparsed_bits'] = message.strip()
 
     elif message.startswith('=>') or message.startswith('->'):
         exim['flags'] = message[:2]
@@ -79,16 +85,19 @@ def parse_log_message(message):
         if message.strip():
             log.debug('something not parsed: {message:}', message = message)
             exim['unparsed'] = 1
+            exim['unparsed_bits'] = message.strip()
 
     elif message.startswith('>>'):
         exim['flags'] = '>>'
         exim['category'] = 'delivery_successful'
         exim['unparsed'] = 1
+        exim['unparsed_bits'] = message.strip()
 
     elif message.startswith('*>'):
         exim['flags'] = '*>'
         exim['category'] = 'delivery_unsuccessful'
         exim['unparsed'] = 1
+        exim['unparsed_bits'] = message.strip()
 
     elif message.startswith('**'):
         exim['flags'] = '**'
@@ -144,15 +153,17 @@ def parse_log_message(message):
         if message.strip():
             log.debug('something not parsed: {message:}', message = message)
             exim['unparsed'] = 1
+            exim['unparsed_bits'] = message.strip()
 
     elif message.startswith('=='):
         exim['flags'] = '=='
         exim['category'] = 'delivery_delayed'
         exim['unparsed'] = 1
+        exim['unparsed_bits'] = message.strip()
 
     else:
-
         exim['category'] = 'other'
         exim['unparsed'] = 1
+        exim['unparsed_bits'] = message.strip()
 
     return ['exim'], {'exim': exim}
