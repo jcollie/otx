@@ -22,7 +22,8 @@ exim_transport_re = re.compile(r'(?:T=(?P<transport>[^ ]+))', re.DOTALL | re.MUL
 exim_u_re = re.compile(r'(?:U=(?P<user>[^ ]+))', re.DOTALL | re.MULTILINE)
 exim_x_re = re.compile(r'(?:X=(?P<tls>[^ ]+))', re.DOTALL | re.MULTILINE)
 exim_cv_re = re.compile(r'(?:CV=(?P<certificate_verified>[^ ]+))', re.DOTALL | re.MULTILINE)
-exim_smtp_error_re = re.compile(r'(?:: SMTP error from remote mail server after (?P<smtp_command>.*): host (?P<remote_hostname>[^ ]+) \[(?P<remote_address>[^ ]+)\]: (?P<smtp_error>\d{3}.*))\Z', re.DOTALL | re.MULTILINE)
+exim_smtp_error_1_re = re.compile(r'(?:: SMTP error from remote mail server after (?P<smtp_command>.*): host (?P<remote_hostname>[^ ]+) \[(?P<remote_address>[^ ]+)\]: (?P<smtp_error>\d{3}.*))\Z', re.DOTALL | re.MULTILINE)
+exim_smtp_error_2_re = re.compile(r'(?: SMTP error from remote mail server after (?P<smtp_command>.*): (?P<smtp_error>\d{3}.*))\Z', re.DOTALL | re.MULTILINE)
 exim_rte_error_re = re.compile(r': retry timeout exceeded\Z', re.DOTALL | re.MULTILINE)
 exim_unroutable_error_re = re.compile(r': Unrouteable address\Z', re.DOTALL | re.MULTILINE)
 exim_no_smtp_error_re = re.compile(r': an MX or SRV record indicated no SMTP service\Z', re.DOTALL | re.MULTILINE)
@@ -99,7 +100,7 @@ def parse_log_message(message):
         exim['category'] = 'delivery_unsuccessful'
         exim['unparsed'] = 0
 
-        match = exim_smtp_error_re.search(message)
+        match = exim_smtp_error_1_re.search(message)
         if match:
             for key, value in match.groupdict().items():
                 if value is not None:
@@ -108,6 +109,15 @@ def parse_log_message(message):
                 exim['smtp_error'] = exim['smtp_error'].replace('\\n', '\n')
             message = message[:match.start()] + message[match.end():]
 
+        match = exim_smtp_error_2_re.search(message)
+        if match:
+            for key, value in match.groupdict().items():
+                if value is not None:
+                    exim[key] = value
+            if 'smtp_error' in exim:
+                exim['smtp_error'] = exim['smtp_error'].replace('\\n', '\n')
+            message = message[:match.start()] + message[match.end():]
+            
         match = exim_rte_error_re.search(message)
         if match:
             exim['error'] = 'retry timeout exceeded'
@@ -128,7 +138,7 @@ def parse_log_message(message):
             exim['error'] = 'all relevant MX records point to non-existent hosts'
             message = message[:match.start()] + message[match.end():]
 
-        for regex in [exim_recipient_re, exim_router_re, exim_transport_re, exim_x_re]:
+        for regex in [exim_recipient_re, exim_remote_host_re, exim_router_re, exim_transport_re, exim_x_re]:
             match = regex.search(message)
             if match:
                 for key, value in match.groupdict().items():
