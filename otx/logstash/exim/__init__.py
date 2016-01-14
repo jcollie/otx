@@ -8,7 +8,7 @@ log = Logger()
 exim_id_re = re.compile(r'\A(?P<id>[A-Za-z0-9]{6}-[A-Za-z0-9]{6}-[A-Za-z0-9]{2})\s*(?P<rest>.*)\Z', re.DOTALL | re.MULTILINE)
 
 exim_sender_re = re.compile(r'\A<= (?P<sender>[^ ]+) ', re.DOTALL | re.MULTILINE)
-exim_recipient_re = re.compile(r'\A(?:=>|\*\*) (?P<recipient>[^ ]+)(?: <(?P<recipient_original>[^ ]+)>)?', re.DOTALL | re.MULTILINE)
+exim_recipient_re = re.compile(r'\A(?:=>|->|\*\*) (?P<recipient>[^ ]+)(?: <(?P<recipient_original>[^ ]+)>)?', re.DOTALL | re.MULTILINE)
 
 exim_confirmation_re = re.compile(r'(?:C="(?P<confirmation>[^"]+)")', re.DOTALL | re.MULTILINE)
 exim_remote_host_re = re.compile(r'H=(?:(?<!\()(?P<remote_hostname>[^ ()]+)(?!\)) )?(?:\((?P<remote_heloname>[^ ]+)\) )?\[(?P<remote_address>[^ ]+)\]', re.DOTALL | re.MULTILINE)
@@ -63,8 +63,8 @@ def parse_log_message(message):
             log.debug('something not parsed: {message:}', message = message)
             exim['unparsed'] = 1
 
-    elif message.startswith('=>'):
-        exim['flags'] = '=>'
+    elif message.startswith('=>') or message.startswith('->'):
+        exim['flags'] = message[:2]
         exim['category'] = 'delivery_successful'
         exim['unparsed'] = 0
 
@@ -79,11 +79,6 @@ def parse_log_message(message):
         if message.strip():
             log.debug('something not parsed: {message:}', message = message)
             exim['unparsed'] = 1
-
-    elif message.startswith('->'):
-        exim['flags'] = '->'
-        exim['category'] = 'delivery_successful'
-        exim['unparsed'] = 1
 
     elif message.startswith('>>'):
         exim['flags'] = '>>'
