@@ -50,6 +50,8 @@ class Client(object):
                             'PASSWORD': password}
 
         self.ssl = ssl
+        self.crt = crt
+        self.key = key
         self.hostname = hostname
         self.port = port
 
@@ -60,8 +62,8 @@ class Client(object):
         self.log.debug('connecting to AMQP broker {}:{}'.format(self.hostname, self.port))
         if self.ssl:
             endpoint = 'ssl:host={}:port={}'.format(self.hostname, self.port)
-            if crt is not None and key is not None:
-                endpoint += ':certKey={}:privateKey={}'.format(crt, key)
+            if self.crt is not None and self.key is not None:
+                endpoint += ':certKey={}:privateKey={}'.format(self.crt, self.key)
         else:
             endpoint = 'ssl:host={}:port={}'.format(self.hostname, self.port)
         self.endpoint = endpoints.clientFromString(self.reactor, endpoint)
