@@ -53,7 +53,7 @@ class Client(object):
         self.hostname = hostname
         self.port = port
 
-        #self.setup_never_finished = self.reactor.callLater(300.0, self.setupNeverFinished)
+        self.setup_never_finished = self.reactor.callLater(60.0, self.setupNeverFinished)
         self.reactor.callWhenRunning(self.start)
 
     def start(self):
@@ -88,6 +88,7 @@ class Client(object):
     def channelOpened(self, _):
         self.log.debug('channel opened')
         self.reactor.callLater(0.0, self.getReturnMessage)
+        self.setup_never_finished.cancel()
         self.setupFinished()
 
     def getReturnMessage(self):
