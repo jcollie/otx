@@ -69,24 +69,27 @@ class Client(object):
         self.endpoint = endpoints.clientFromString(self.reactor, endpoint)
         d = self.endpoint.connect(self.factory)
         d.addCallback(self.gotConnection)
-        #d.addErrback(self.errConnection)
+        d.addErrback(self.setupFailure)
         
     def gotConnection(self, connection):
         self.log.debug('got connection, logging in')
         self.connection = connection
         d = self.connection.start(self.credentials)
         d.addCallback(self.connectionStarted)
+        d.addErrback(self.setupFailure)
 
     def connectionStarted(self, _):
         self.log.debug('connection started')
         d = self.connection.channel(1)
         d.addCallback(self.gotChannel)
+        d.addErrback(self.setupFailure)
 
     def gotChannel(self, channel):
         self.log.debug('got channel, opening')
         self.channel = channel
         d = self.channel.channel_open()
         d.addCallback(self.channelOpened)
+        d.addErrback(self.setupFailure)
 
     def channelOpened(self, _):
         self.log.debug('channel opened')
