@@ -59,13 +59,14 @@ class Client(object):
         self.reactor.callWhenRunning(self.start)
 
     def start(self):
-        self.log.debug('connecting to AMQP broker {}:{}'.format(self.hostname, self.port))
+        self.log.debug('connecting to AMQP broker {h:}:{p:}' h = self.hostname, p = self.port)
         if self.ssl:
             endpoint = 'ssl:host={}:port={}'.format(self.hostname, self.port)
             if self.crt is not None and self.key is not None:
                 endpoint += ':certKey={}:privateKey={}'.format(self.crt, self.key)
         else:
             endpoint = 'ssl:host={}:port={}'.format(self.hostname, self.port)
+        self.log.debug('connecting to {e:}', e = endpoint)
         self.endpoint = endpoints.clientFromString(self.reactor, endpoint)
         d = self.endpoint.connect(self.factory)
         d.addCallback(self.gotConnection)
