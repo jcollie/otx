@@ -38,7 +38,7 @@ class Client(object):
     PERSISTENT = 2
     Content = txamqp.content.Content
 
-    def __init__(self, reactor, hostname, port = 5672, ssl = False, vhost = '/', username = 'guest', password = 'guest'):
+    def __init__(self, reactor, hostname, port = 5672, ssl = False, crt = None, key = None, vhost = '/', username = 'guest', password = 'guest'):
         self.reactor = reactor
 
         spec = pkg_resources.resource_string(__name__, 'amqp0-9-1.stripped.xml')
@@ -59,9 +59,12 @@ class Client(object):
     def start(self):
         self.log.debug('connecting to AMQP broker {}:{}'.format(self.hostname, self.port))
         if self.ssl:
-            self.endpoint = endpoints.clientFromString(self.reactor, 'ssl:host={}:port={}'.format(self.hostname, self.port))
+            endpoint = 'ssl:host={}:port={}'.format(self.hostname, self.port)
+            if crt is not None and key is not None:
+                endpoint += ':certKey={}:privateKey={}'.format(crt, key)
         else:
-            self.endpoint = endpoints.clientFromString(self.reactor, 'tcp:host={}:port={}'.format(self.hostname, self.port))
+            endpoint = 'ssl:host={}:port={}'.format(self.hostname, self.port)
+        self.endpoint = endpoints.clientFromString(self.reactor, endpoint)
         d = self.endpoint.connect(self.factory)
         d.addCallback(self.gotConnection)
         
