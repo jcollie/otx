@@ -63,6 +63,10 @@ class Client(object):
         if self.ssl:
             endpoint = 'ssl:host={}:port={}'.format(self.hostname, self.port)
             if self.crt is not None and self.key is not None:
+                c = file(self.crt, 'r').read()
+                self.log.debug('{c:}', c = c)
+                k = file(self.key, 'r').read()
+                self.log.debug('{k:}', k = k)
                 endpoint += ':certKey={}:privateKey={}'.format(self.crt, self.key)
         else:
             endpoint = 'ssl:host={}:port={}'.format(self.hostname, self.port)
