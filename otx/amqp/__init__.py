@@ -103,4 +103,4 @@ class Client(object):
 
     def gotReturnMessage(self, message):
         self.reactor.callLater(0.0, self.getReturnMessage)
-        self.log.error(`message`)
+        self.log.error('{message:}', message = message)
