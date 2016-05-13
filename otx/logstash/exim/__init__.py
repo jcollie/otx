@@ -29,6 +29,7 @@ exim_unroutable_error_re = re.compile(r': Unrouteable address\Z', re.DOTALL | re
 exim_no_smtp_error_re = re.compile(r': an MX or SRV record indicated no SMTP service\Z', re.DOTALL | re.MULTILINE)
 exim_no_mx_error_re = re.compile(r': all relevant MX records point to non-existent hosts\Z', re.DOTALL | re.MULTILINE)
 exim_reverse_re = re.compile(r'\Ano host name found for IP address (?P<remote_address>[^ ]+)\Z', re.DOTALL | re.MULTILINE)
+exim_subject_re = re.compile(r'(?:T="(?P<subject>[^"]+)")', re.DOTALL | re.MULTILINE)
     
 def parse_log_message(message):
     exim = {}
@@ -74,7 +75,7 @@ def parse_log_message(message):
         exim['category'] = 'delivery_successful'
         exim['unparsed'] = 0
 
-        for regex in [exim_recipient_re, exim_confirmation_re, exim_router_re, exim_transport_re, exim_message_id_re, exim_remote_host_re, exim_x_re, exim_cv_re]:
+        for regex in [exim_recipient_re, exim_confirmation_re, exim_router_re, exim_transport_re, exim_message_id_re, exim_remote_host_re, exim_x_re, exim_cv_re, exim_subject_re]:
             match = regex.search(message)
             if match:
                 for key, value in match.groupdict().items():
