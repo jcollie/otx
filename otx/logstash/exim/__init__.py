@@ -57,7 +57,7 @@ def parse_log_message(message):
         exim['category'] = 'received'
         exim['unparsed'] = 0
 
-        for regex in [exim_sender_re, exim_reference_re, exim_remote_host_re, exim_size_re, exim_i_re, exim_x_re, exim_p_re, exim_u_re, exim_message_id_re]:
+        for regex in [exim_sender_re, exim_reference_re, exim_remote_host_re, exim_size_re, exim_i_re, exim_x_re, exim_p_re, exim_u_re, exim_message_id_re, exim_subject_re]:
             match = regex.search(message)
             if match:
                 for key, value in match.groupdict().items():
@@ -75,7 +75,7 @@ def parse_log_message(message):
         exim['category'] = 'delivery_successful'
         exim['unparsed'] = 0
 
-        for regex in [exim_recipient_re, exim_confirmation_re, exim_router_re, exim_transport_re, exim_message_id_re, exim_remote_host_re, exim_x_re, exim_cv_re, exim_subject_re]:
+        for regex in [exim_recipient_re, exim_confirmation_re, exim_router_re, exim_transport_re, exim_message_id_re, exim_remote_host_re, exim_x_re, exim_cv_re]:
             match = regex.search(message)
             if match:
                 for key, value in match.groupdict().items():
